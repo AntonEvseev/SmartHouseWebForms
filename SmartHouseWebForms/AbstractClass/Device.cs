@@ -17,10 +17,7 @@ namespace SmartHouseWebForms
             Status = status;
             Name = name;
         }
-       
-       
         public string Name { get; set; }
-
         public bool Status 
         { 
             get 
@@ -31,10 +28,7 @@ namespace SmartHouseWebForms
             {
                 status = value;
             }
-            
         }
-        
-
         public virtual void OnDevice()
         {
             if (Status == false)
@@ -54,11 +48,11 @@ namespace SmartHouseWebForms
             string status;
             if (this.status)
             {
-                status = "включено";
+                status = "Включено";
             }
             else
             {
-                status = "выключено";
+                status = "Выключено";
             }
             return status;
         }

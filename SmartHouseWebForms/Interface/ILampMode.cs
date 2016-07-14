@@ -8,13 +8,12 @@ namespace SmartHouseWebForms
 {
     public interface ILampMode
     {
-         BrightnessLevel Level
+        BrightnessLevel Level
         {
             get;
         }
-         void SetLowBrightness();
-         void SetMediumBrightness();
-         void SetHighBrightness();
-    
+        void SetLowBrightness();
+        void SetMediumBrightness();
+        void SetHighBrightness();
     }
 }

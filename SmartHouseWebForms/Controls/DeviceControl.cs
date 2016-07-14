@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using Image = System.Web.UI.WebControls.Image;
 
 
 
@@ -15,9 +16,10 @@ namespace SmartHouseWebForms
         private IDictionary<int, Device> devicesDictionary; // Коллекция устройств
         private Label statusLabel; // Отображение статуса устройства
         private Button onButton; // Кнопка Включения устройства
-        private Button offButton; // Кнопка выключения устройства
         private Button deleteButton; // Кнопка удаления устройства
         private DropDownList brightnessLevelList;
+        private Image im;
+        
 
         public DeviceControl(int id, IDictionary<int, Device> devicesDictionary)
         {
@@ -27,26 +29,36 @@ namespace SmartHouseWebForms
         }
         protected void Initializer()
         {
-            CssClass = "device-div";
            
-            Controls.Add(Span("Устройство: " + devicesDictionary[id].Name + "<br />"));
-            if (devicesDictionary[id] is IStatus)
-            {
-                Controls.Add(Span("Состояние устройства:" + devicesDictionary[id].Status.ToString()  + "<br />"));
-                
-            }
+            
+            CssClass = "device-div";
+            im = new Image();
+            // Добавление gif анимации в зависимости от девайса
             if (devicesDictionary[id] is ILampMode)
             {
                 
-                BrightnessLevel a = ((ILampMode)devicesDictionary[id]).Level;
-                Controls.Add(Span("Уровень яркости:" + a.ToString() + "<br />"));
-                
+                if (devicesDictionary[id].Status == false)
+                {
+                    im.ImageUrl = "image/LampOff.gif";
+                    
+                }
+                else
+                {
+                    im.ImageUrl = "image/LampOn.gif";
+                }
+                Controls.Add(im);
+            }
+            Controls.Add(Span("<br />" + "Устройство: " + devicesDictionary[id].Name + "<br />"));
+            if (devicesDictionary[id] is IStatus)
+            {
+               Controls.Add(Span("Состояние устройства:" + devicesDictionary[id].ToString() + "<br />"));
             }
             if (devicesDictionary[id] is ILampMode)
             {
                 Controls.Add(Span("Выберите режим: "));
                 brightnessLevelList = new DropDownList();
                 brightnessLevelList.ID = "b" + id;
+                brightnessLevelList.CssClass = "list";
                 brightnessLevelList.Items.Add(BrightnessLevel.High.ToString());
                 brightnessLevelList.Items.Add(BrightnessLevel.Low.ToString());
                 brightnessLevelList.Items.Add(BrightnessLevel.Medium.ToString());
@@ -56,89 +68,84 @@ namespace SmartHouseWebForms
                 }
                 Controls.Add(brightnessLevelList);
                 Button setBrightnessLevel = Button("Установить", "setB ");
+                setBrightnessLevel.CssClass = "button";
                 setBrightnessLevel.Click += SetBrightnessLevelButtonClick;
                 Controls.Add(setBrightnessLevel);
                 Controls.Add(Span("<br />"));
-                
             }
-            //if (devicesDictionary[id] is IStatus)
-            //{
-            //    onButton = Button("Включить", "on");
-                            
-            //}
-            //onButton.Click += ButtonClick;
-            //Controls.Add(onButton);
             onButton = new Button();
-            onButton.ID = "o" + id.ToString();
-            onButton.Text = "Включить";
             onButton.Click += OnButtonClick;
+            onButton.ID = "o" + id.ToString();
+            if (devicesDictionary[id].Status == false)
+            {
+                onButton.CssClass = "off";
+            }
+            else
+            {
+               onButton.CssClass = "on";
+            }
             Controls.Add(onButton);
-
-            offButton = new Button();
-            offButton.Text = "Выключить";
-            offButton.Click += OffButtonClick;
-            Controls.Add(offButton);
-
 
             Controls.Add(Span("<br />"));
 
             deleteButton = new Button();
             deleteButton.ID = "d" + id.ToString();
+            deleteButton.CssClass = "button";
             deleteButton.Text = "Удалить устройство";
             deleteButton.Click += DeleteButtonClick;
             Controls.Add(deleteButton);
         }
-
-        private void OffButtonClick(object sender, EventArgs e)
-        {
-            devicesDictionary[id].OffDevice();
-        }
-
         private void OnButtonClick(object sender, EventArgs e)
         {
-            devicesDictionary[id].OnDevice();
-        }
-
-        private void DeleteButtonClick(object sender, EventArgs e)
-        {
-            devicesDictionary.Remove(id); // Удаление устройства из коллекции
-            Parent.Controls.Remove(this); // Удаление графики для устройства
-        }
-
-        protected Button Button(string text, string pref)
-        {
-            Button button = new Button();
-            button.ID = pref + id;
-            button.Text = text;
-            return button;
-        }
-        protected HtmlGenericControl Span(string innerHTML)
-        {
-            HtmlGenericControl span = new HtmlGenericControl("span");
-            span.InnerHtml = innerHTML;
-            return span;
-        }
-        private void SetBrightnessLevelButtonClick(object sender, EventArgs e)
-        {
-            HttpContext.Current.Session["BLevel"] = brightnessLevelList.SelectedIndex;
-            ILampMode b = (ILampMode)devicesDictionary[id];
-            switch (brightnessLevelList.SelectedIndex)
+            if (devicesDictionary[id].Status == false)
             {
-                default:
-                    b.SetHighBrightness();
-                    break;
-                case 1:
-                   
-                    b.SetLowBrightness();
-                    break;
-                case 2:
-                    b.SetMediumBrightness();
-                    break;
-
+                devicesDictionary[id].OnDevice();
+                onButton.CssClass = "off";
+            }
+            else
+            {
+                devicesDictionary[id].OffDevice();
+                onButton.CssClass = "on";
             }
             Controls.Clear();
             Initializer();
+       }
+       private void DeleteButtonClick(object sender, EventArgs e)
+       {
+           devicesDictionary.Remove(id); // Удаление устройства из коллекции
+           Parent.Controls.Remove(this); // Удаление графики для устройства
+       }
+       protected Button Button(string text, string pref)
+       {
+           Button button = new Button();
+           button.ID = pref + id;
+           button.Text = text;
+           return button;
+       }
+       protected HtmlGenericControl Span(string innerHTML)
+        {
+           HtmlGenericControl span = new HtmlGenericControl("span");
+           span.InnerHtml = innerHTML;
+           return span;
         }
-
-    }
+        private void SetBrightnessLevelButtonClick(object sender, EventArgs e)
+        {
+           HttpContext.Current.Session["BLevel"] = brightnessLevelList.SelectedIndex;
+           ILampMode b = (ILampMode)devicesDictionary[id];
+           switch (brightnessLevelList.SelectedIndex)
+           {
+               default:
+                   b.SetHighBrightness();
+                   break;
+               case 1:
+                   b.SetLowBrightness();
+                   break;
+               case 2:
+                   b.SetMediumBrightness();
+                   break;
+            }
+            Controls.Clear();
+            Initializer();
+       }
+   }
 }

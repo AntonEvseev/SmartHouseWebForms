@@ -7,15 +7,11 @@ namespace SmartHouseWebForms
 {
     public class Lamp : Device, ILampMode
     {
-
-
         private BrightnessLevel level;
         public Lamp(bool status, string name, BrightnessLevel level)
           :base (status, name)
         {
-            
-           this.level = level;
-           
+          this.level = level;
         }
         public BrightnessLevel Level
         {
@@ -23,11 +19,7 @@ namespace SmartHouseWebForms
             {
                 return level;
             }
-           
-
         }
-        
-       // private BrightnessLevel mode;
         public void SetLowBrightness()
         {
             if (Status)
@@ -54,22 +46,21 @@ namespace SmartHouseWebForms
             string mod;
             if (level == BrightnessLevel.Low)
             {
-                mod = "низкий";
+                mod = "Низкий";
             }
             else if (level == BrightnessLevel.Medium)
             {
-                mod = "средний";
+                mod = "Средний";
             }
             else if (level == BrightnessLevel.High)
             {
-                mod = "высокий";
+                mod = "Высокий";
             }
             else
             {
-                mod = "не задан";
+                mod = "Не задан";
             }
-            //return base.ToString() + ", режим яркости: " + mod;
-            return base.ToString() + mod.ToString() ;
+            return base.ToString() + "<br />" + "Режим яркости: " + mod.ToString() ;
         }
     }
 }

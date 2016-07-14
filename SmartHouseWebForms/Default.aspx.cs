@@ -41,6 +41,7 @@ namespace SmartHouseWebForms
             else
             {
                 InitialiseDevicesPanel();
+                
             }
         }
         protected void InitialiseDevicesPanel()
@@ -59,7 +60,7 @@ namespace SmartHouseWebForms
                 default:
                     newDevice = new Lamp(false, "Лампа", BrightnessLevel.High);
                     break;
-                
+            
             }
 
             int id = (int)Session["NextId"];
