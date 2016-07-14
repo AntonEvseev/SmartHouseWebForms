@@ -17,7 +17,7 @@ namespace SmartHouseWebForms
         private Label statusLabel; // Отображение статуса устройства
         private Button onButton; // Кнопка Включения устройства
         private Button deleteButton; // Кнопка удаления устройства
-        private DropDownList brightnessLevelList;
+        private DropDownList brightnessLevelList;//а
         private Image im;
         
 
