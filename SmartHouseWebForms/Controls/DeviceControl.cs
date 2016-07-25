@@ -27,7 +27,7 @@ namespace SmartHouseWebForms
         private Button deleteButton; // Кнопка удаления устройства
         private DropDownList brightnessLevelList;//а
         private Image im;
-        private string error;  // текст сообщение о необходимости включить устройство
+        private string error;  // текст сообщение о необходимости включить устройство мм
         public string Error
         {
             get
