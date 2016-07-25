@@ -20,8 +20,9 @@ namespace SmartHouseWebForms
             {
                 devicesDictionary = new SortedDictionary<int, Device>();
                 devicesDictionary.Add(1, new Lamp(false, "Лампа", BrightnessLevel.High));
+                devicesDictionary.Add(2, new Radio(false, "Радио"));
                 Session["Devices"] = devicesDictionary;
-                Session["NextId"] = 2;
+                Session["NextId"] = 3;
                 
             }
 
@@ -59,6 +60,9 @@ namespace SmartHouseWebForms
             {
                 default:
                     newDevice = new Lamp(false, "Лампа", BrightnessLevel.High);
+                    break;
+                case 1:
+                    newDevice = new Radio(false, "Радио");
                     break;
             
             }

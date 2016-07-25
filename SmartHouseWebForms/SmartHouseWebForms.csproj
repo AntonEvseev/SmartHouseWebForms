@@ -85,8 +85,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Interface\ILampMode.cs" />
+    <Compile Include="Interface\ISetVolume.cs" />
+    <Compile Include="Interface\ISetWave.cs" />
     <Compile Include="Interface\IStatus.cs" />
     <Compile Include="Models\Lamp.cs" />
+    <Compile Include="Models\Radio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

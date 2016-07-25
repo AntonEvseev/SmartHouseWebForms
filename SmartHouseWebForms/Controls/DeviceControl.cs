@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Web;
+using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Image = System.Web.UI.WebControls.Image;
@@ -14,13 +17,27 @@ namespace SmartHouseWebForms
     { 
         private int id; // Ключ  устройства в коллекции устройств
         private IDictionary<int, Device> devicesDictionary; // Коллекция устройств
-        private Label statusLabel; // Отображение статуса устройства
+        private Label errorMessage; // Отображение статуса устройства
         private Button onButton; // Кнопка Включения устройства
+        private Button plusVolume; // Кнопка увеличения громкости
+        private Button minusVolume;
+        private Button lessWave;
+        private Button upWave;
+        private Button set; // Кнопка установки значения
         private Button deleteButton; // Кнопка удаления устройства
         private DropDownList brightnessLevelList;//а
         private Image im;
+        private string error;  // текст сообщение о необходимости включить устройство
+        public string Error
+        {
+            get
+            {
+                return error;
+            }
+        }
+        private TextBox volSet;
         
-
+        
         public DeviceControl(int id, IDictionary<int, Device> devicesDictionary)
         {
             this.id = id;
@@ -48,10 +65,67 @@ namespace SmartHouseWebForms
                 }
                 Controls.Add(im);
             }
+            if (devicesDictionary[id] is ISetWave)
+            {
+                im.ImageUrl = "image/radio.png";
+                Controls.Add(im);
+            }
+            errorMessage = new Label();
+            errorMessage.ForeColor = System.Drawing.Color.Red;
+            errorMessage.Text = Error;
+            Controls.Add(errorMessage);
             Controls.Add(Span("<br />" + "Устройство: " + devicesDictionary[id].Name + "<br />"));
             if (devicesDictionary[id] is IStatus)
             {
+               
                Controls.Add(Span("Состояние устройства:" + devicesDictionary[id].ToString() + "<br />"));
+            }
+            if (devicesDictionary[id] is ISetVolume)
+            {
+               minusVolume = new Button();
+               minusVolume.ID = "vm" + id.ToString();
+               minusVolume.CssClass = "button";
+               minusVolume.Text = "Volume-";
+               minusVolume.Click += MinusVolumeButtonClick;
+               Controls.Add(minusVolume);
+               plusVolume = new Button();
+               plusVolume.ID = "vp" + id.ToString();
+               plusVolume.CssClass = "button";
+               plusVolume.Text = "Volume+";
+               plusVolume.Click += PlusVolumeButtonClick;
+               Controls.Add(plusVolume);
+               Controls.Add(Span("<br />"));
+               //int temp = ((ISetVolume)devicesDictionary[id]).Volume;   наверное лишнее
+               volSet = new TextBox();
+               //volSet = TextBox(temp);
+               volSet.Text = "";
+               Controls.Add(volSet);
+               set = new Button();
+               set.ID = "s" + id.ToString();
+               set.CssClass = "button";
+               set.Text = "Set Volume";
+               set.Click += SetButtonClick;
+               Controls.Add(set);
+               Controls.Add(Span("<br />"));
+
+               
+               
+            }
+            if(devicesDictionary[id] is ISetWave)
+            {
+                lessWave = new Button();
+                lessWave.ID = "lw" + id.ToString();
+                lessWave.CssClass = "button";
+                lessWave.Text = "Wave-";
+                lessWave.Click += LessWaveButtonClick;
+                Controls.Add(lessWave);
+                upWave = new Button();
+                upWave.ID = "uw" + id.ToString();
+                upWave.CssClass = "button";
+                upWave.Text = "Wave+";
+                upWave.Click += UpWaveButtonClick;
+                Controls.Add(upWave);
+                
             }
             if (devicesDictionary[id] is ILampMode)
             {
@@ -95,6 +169,85 @@ namespace SmartHouseWebForms
             deleteButton.Click += DeleteButtonClick;
             Controls.Add(deleteButton);
         }
+
+        private void UpWaveButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                ISetWave w = (ISetWave)devicesDictionary[id];
+                w.UpWave();
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+        private void LessWaveButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                ISetWave w = (ISetWave)devicesDictionary[id];
+                w.LessWave();
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+        private void SetButtonClick(object sender, EventArgs e)
+        {
+            ISetVolume s = (ISetVolume)devicesDictionary[id];
+            int a = Convert.ToInt32(volSet.Text);
+            s.SetVolume(a);
+            Controls.Clear();
+            Initializer();
+        }
+
+        private TextBox TextBox(int temp)
+        {
+            TextBox textBox = new TextBox();
+            textBox.Text = temp.ToString();
+            textBox.Columns = 1;
+            return textBox;
+        }
+
+        private void MinusVolumeButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                ISetVolume v = (ISetVolume)devicesDictionary[id];
+                v.LessVolume();
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+        private void PlusVolumeButtonClick(object sender, EventArgs e)
+        {
+            if(devicesDictionary[id].Status)
+            {
+                ISetVolume v = (ISetVolume)devicesDictionary[id];
+                v.UpVolume();
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+       
         private void OnButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status == false)
@@ -129,23 +282,33 @@ namespace SmartHouseWebForms
            return span;
         }
         private void SetBrightnessLevelButtonClick(object sender, EventArgs e)
-        {
-           HttpContext.Current.Session["BLevel"] = brightnessLevelList.SelectedIndex;
-           ILampMode b = (ILampMode)devicesDictionary[id];
-           switch (brightnessLevelList.SelectedIndex)
+       {
+           
+           if (devicesDictionary[id].Status)
            {
-               default:
-                   b.SetHighBrightness();
-                   break;
-               case 1:
-                   b.SetLowBrightness();
-                   break;
-               case 2:
-                   b.SetMediumBrightness();
-                   break;
-            }
+               HttpContext.Current.Session["BLevel"] = brightnessLevelList.SelectedIndex;
+               ILampMode b = (ILampMode)devicesDictionary[id];
+               switch (brightnessLevelList.SelectedIndex)
+               {
+                   default:
+                       b.SetHighBrightness();
+                       break;
+                   case 1:
+                       b.SetLowBrightness();
+                       break;
+                   case 2:
+                       b.SetMediumBrightness();
+                       break;
+               }
+           }
+           else
+           {
+              error = "Включите устройство!";
+           }
             Controls.Clear();
             Initializer();
        }
+
+        
    }
 }
