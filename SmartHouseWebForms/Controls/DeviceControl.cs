@@ -23,9 +23,12 @@ namespace SmartHouseWebForms
         private Button minusVolume;
         private Button lessWave;
         private Button upWave;
-        private Button set; // Кнопка установки значения
+        private Button setVol; // Кнопка установки значения громкости
+        private Button setWave; // Кнопка установки значения волны
         private Button deleteButton; // Кнопка удаления устройства
         private DropDownList brightnessLevelList;//а
+        private DropDownList conditionerModeList;
+        private DropDownList fridgeModeList;
         private Image im;
         private string error;  // текст сообщение о необходимости включить устройство мм
         public string Error
@@ -36,7 +39,8 @@ namespace SmartHouseWebForms
             }
         }
         private TextBox volSet;
-        
+        private TextBox waveSet;
+       
         
         public DeviceControl(int id, IDictionary<int, Device> devicesDictionary)
         {
@@ -46,18 +50,14 @@ namespace SmartHouseWebForms
         }
         protected void Initializer()
         {
-           
-            
             CssClass = "device-div";
             im = new Image();
             // Добавление gif анимации в зависимости от девайса
             if (devicesDictionary[id] is ILampMode)
             {
-                
                 if (devicesDictionary[id].Status == false)
                 {
                     im.ImageUrl = "image/LampOff.gif";
-                    
                 }
                 else
                 {
@@ -67,7 +67,22 @@ namespace SmartHouseWebForms
             }
             if (devicesDictionary[id] is ISetWave)
             {
-                im.ImageUrl = "image/radio.png";
+                im.ImageUrl = "image/radio2.png";
+                Controls.Add(im);
+            }
+            if (devicesDictionary[id] is ISetChannel)
+            {
+                im.ImageUrl = "image/TV-Set.png";
+                Controls.Add(im);
+            }
+            if (devicesDictionary[id] is IFridgeMode)
+            {
+                im.ImageUrl = "image/Fridge2.png";
+                Controls.Add(im);
+            }
+            if (devicesDictionary[id] is IConditionerMode)
+            {
+                im.ImageUrl = "image/conditioner.png";
                 Controls.Add(im);
             }
             errorMessage = new Label();
@@ -77,8 +92,7 @@ namespace SmartHouseWebForms
             Controls.Add(Span("<br />" + "Устройство: " + devicesDictionary[id].Name + "<br />"));
             if (devicesDictionary[id] is IStatus)
             {
-               
-               Controls.Add(Span("Состояние устройства:" + devicesDictionary[id].ToString() + "<br />"));
+                Controls.Add(Span("Состояние устройства:" + devicesDictionary[id].ToString() + "<br />"));
             }
             if (devicesDictionary[id] is ISetVolume)
             {
@@ -95,21 +109,17 @@ namespace SmartHouseWebForms
                plusVolume.Click += PlusVolumeButtonClick;
                Controls.Add(plusVolume);
                Controls.Add(Span("<br />"));
-               //int temp = ((ISetVolume)devicesDictionary[id]).Volume;   наверное лишнее
                volSet = new TextBox();
-               //volSet = TextBox(temp);
+               volSet.ID = "vs" + id.ToString();
                volSet.Text = "";
                Controls.Add(volSet);
-               set = new Button();
-               set.ID = "s" + id.ToString();
-               set.CssClass = "button";
-               set.Text = "Set Volume";
-               set.Click += SetButtonClick;
-               Controls.Add(set);
+               setVol = new Button();
+               setVol.ID = "sv" + id.ToString();
+               setVol.CssClass = "button";
+               setVol.Text = "Set Volume";
+               setVol.Click += SetVolButtonClick;
+               Controls.Add(setVol);
                Controls.Add(Span("<br />"));
-
-               
-               
             }
             if(devicesDictionary[id] is ISetWave)
             {
@@ -125,7 +135,17 @@ namespace SmartHouseWebForms
                 upWave.Text = "Wave+";
                 upWave.Click += UpWaveButtonClick;
                 Controls.Add(upWave);
-                
+                waveSet = new TextBox();
+                waveSet.ID = "ws" + id.ToString();
+                //waveSet.Text = "";
+                Controls.Add(waveSet);
+                setWave = new Button();
+                setWave.ID = "sw" + id.ToString();
+                setWave.CssClass = "button";
+                setWave.Text = "Set Wave";
+                setWave.Click += SetWaveButtonClick;
+                Controls.Add(setWave);
+                Controls.Add(Span("<br />"));
             }
             if (devicesDictionary[id] is ILampMode)
             {
@@ -147,6 +167,47 @@ namespace SmartHouseWebForms
                 Controls.Add(setBrightnessLevel);
                 Controls.Add(Span("<br />"));
             }
+            if (devicesDictionary[id] is IConditionerMode)
+            {
+                Controls.Add(Span("Выберите режим: "));
+                conditionerModeList = new DropDownList();
+                conditionerModeList.ID = "cm" + id.ToString();
+                conditionerModeList.CssClass = "list";
+                conditionerModeList.Items.Add(ConditionerMode.Cool.ToString());
+                conditionerModeList.Items.Add(ConditionerMode.Dry.ToString());
+                conditionerModeList.Items.Add(ConditionerMode.Fan.ToString());
+                conditionerModeList.Items.Add(ConditionerMode.Heat.ToString());
+                if (HttpContext.Current.Session["CMode"] != null)
+                {
+                    conditionerModeList.SelectedIndex = (int)HttpContext.Current.Session["CMode"];
+                }
+                Controls.Add(conditionerModeList);
+                Button setConditionerMode = Button("Установить", "setB ");
+                setConditionerMode.CssClass = "button";
+                setConditionerMode.Click += SetConditionerModeButtonClick;
+                Controls.Add(setConditionerMode);
+                Controls.Add(Span("<br />"));
+            }
+            if (devicesDictionary[id] is IFridgeMode)
+            {
+                Controls.Add(Span("Выберите режим: "));
+                fridgeModeList = new DropDownList();
+                fridgeModeList.ID = "fm" + id.ToString();
+                fridgeModeList.CssClass = "list";
+                fridgeModeList.Items.Add(FridgeMode.Defrost.ToString());
+                fridgeModeList.Items.Add(FridgeMode.Freezing.ToString());
+                fridgeModeList.Items.Add(FridgeMode.Superfreezing.ToString());
+                if (HttpContext.Current.Session["FMode"] != null)
+                {
+                    fridgeModeList.SelectedIndex = (int)HttpContext.Current.Session["FMode"];
+                }
+                Controls.Add(fridgeModeList);
+                Button setFridgeMode = Button("Установить", "setB ");
+                setFridgeMode.CssClass = "button";
+                setFridgeMode.Click += SetFridgeModeButtonClick;
+                Controls.Add(setFridgeMode);
+                Controls.Add(Span("<br />"));
+            }
             onButton = new Button();
             onButton.Click += OnButtonClick;
             onButton.ID = "o" + id.ToString();
@@ -159,9 +220,7 @@ namespace SmartHouseWebForms
                onButton.CssClass = "on";
             }
             Controls.Add(onButton);
-
             Controls.Add(Span("<br />"));
-
             deleteButton = new Button();
             deleteButton.ID = "d" + id.ToString();
             deleteButton.CssClass = "button";
@@ -170,6 +229,79 @@ namespace SmartHouseWebForms
             Controls.Add(deleteButton);
         }
 
+        private void SetFridgeModeButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                HttpContext.Current.Session["FMode"] = fridgeModeList.SelectedIndex;
+                IFridgeMode f = (IFridgeMode)devicesDictionary[id];
+                switch (fridgeModeList.SelectedIndex)
+                {
+                    default:
+                        f.SetDefrost();
+                        break;
+                    case 1:
+                        f.SetFreezing();
+                        break;
+                    case 2:
+                        f.SetSuperFreezing();
+                        break;
+                    
+                }
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+        private void SetConditionerModeButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                HttpContext.Current.Session["CMode"] = conditionerModeList.SelectedIndex;
+                IConditionerMode c = (IConditionerMode)devicesDictionary[id];
+                switch (conditionerModeList.SelectedIndex)
+                {
+                    default:
+                        c.SetCoolMode();
+                        break;
+                    case 1:
+                        c.SetDryMode();
+                        break;
+                    case 2:
+                        c.SetFanMode();
+                        break;
+                    case 3:
+                        c.SetHeatMode();
+                        break;
+                }
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+        private void SetWaveButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                ISetWave w = (ISetWave)devicesDictionary[id];
+                double temp = Convert.ToDouble(volSet.Text); //не конвертирует в даблу
+                w.SetWave(temp);
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
         private void UpWaveButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status)
@@ -184,7 +316,6 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
-
         private void LessWaveButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status)
@@ -199,16 +330,21 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
-
-        private void SetButtonClick(object sender, EventArgs e)
+        private void SetVolButtonClick(object sender, EventArgs e)
         {
-            ISetVolume s = (ISetVolume)devicesDictionary[id];
-            int a = Convert.ToInt32(volSet.Text);
-            s.SetVolume(a);
+            if (devicesDictionary[id].Status)
+            {
+                ISetVolume s = (ISetVolume)devicesDictionary[id];
+                int temp = Convert.ToInt32(volSet.Text);
+                s.SetVolume(temp);
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
             Controls.Clear();
             Initializer();
         }
-
         private TextBox TextBox(int temp)
         {
             TextBox textBox = new TextBox();
@@ -216,7 +352,6 @@ namespace SmartHouseWebForms
             textBox.Columns = 1;
             return textBox;
         }
-
         private void MinusVolumeButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status)
@@ -231,7 +366,6 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
-
         private void PlusVolumeButtonClick(object sender, EventArgs e)
         {
             if(devicesDictionary[id].Status)
@@ -246,9 +380,7 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
-
-       
-        private void OnButtonClick(object sender, EventArgs e)
+       private void OnButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status == false)
             {
@@ -283,7 +415,6 @@ namespace SmartHouseWebForms
         }
         private void SetBrightnessLevelButtonClick(object sender, EventArgs e)
        {
-           
            if (devicesDictionary[id].Status)
            {
                HttpContext.Current.Session["BLevel"] = brightnessLevelList.SelectedIndex;
@@ -308,7 +439,5 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
        }
-
-        
    }
 }

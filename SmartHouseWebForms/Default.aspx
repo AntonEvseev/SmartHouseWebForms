@@ -65,6 +65,7 @@
          }
          .device-div{
              width: 250px;
+             height: 600px;
              float: left;
              position: relative;
              top: 20px;
@@ -88,8 +89,10 @@
          <asp:DropDownList ID="dropDownDevicesList" class="button" runat="server">
                 <asp:ListItem>Лампа</asp:ListItem>
                 <asp:ListItem>Радио</asp:ListItem>
-                
-            </asp:DropDownList>
+                <asp:ListItem>Телевизор</asp:ListItem>
+                <asp:ListItem>Холодильник</asp:ListItem>
+                <asp:ListItem>Кондиционер</asp:ListItem>
+         </asp:DropDownList>
         
             <asp:Button ID="addDevicesButton" class="button" runat="server" Text="Добавить" />
             <br />

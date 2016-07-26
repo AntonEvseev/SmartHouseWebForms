@@ -5,14 +5,14 @@ using System.Web;
 
 namespace SmartHouseWebForms
 {
-    public class Radio : Device, ISetVolume, ISetWave
+    public class TV : Device, ISetVolume, ISetChannel
     {
         private int temp;
-        private double wave;
-        public Radio(bool status, string name)
+        private int ch;
+        public TV(bool status, string name)
             : base(status, name)
         {
-            //Status = status;
+            
         }
         public int Volume
         {
@@ -20,6 +20,7 @@ namespace SmartHouseWebForms
             {
                 return temp;
             }
+
             set
             {
                 if (value >= 0 && value <= 100)
@@ -35,10 +36,62 @@ namespace SmartHouseWebForms
                 temp = input;
             }
         }
+        public int Channel
+        {
+            get
+            {
+                return ch;
+            }
+            set
+            {
+                if (value >= 0 && value <= 200)
+                {
+                    ch = value;
+                }
+            }
+        }
+        public void SetChannel(int input)
+        {
+            if (Status)
+            {
+                ch = input;
+            }
+        }
+        public void NextChannel()
+        {
+            if (Status)
+            {
+
+                if (ch < 200)
+                {
+                    ch += 1;
+                }
+                else
+                {
+                    ch = 1;
+                }
+            }
+        }
+        public void PreviousChannel()
+        {
+            if (Status)
+            {
+
+                if (ch > 1)
+                {
+                    ch -= 1;
+                }
+                else
+                {
+                    ch = 0;
+                }
+            }
+        }
         public void UpVolume()
         {
             if (Status)
             {
+
                 if (temp < 100)
                 {
                     temp += 1;
@@ -64,58 +117,9 @@ namespace SmartHouseWebForms
                 }
             }
         }
-        public double Wave
-        {
-            get
-            {
-                return wave;
-            }
-            set
-            {
-                if (value >= 87.5 && value <= 108)
-                {
-                    wave = value;
-                }
-            }
-        }
-        public void SetWave(double input)
-        {
-            if (Status)
-            {
-                wave = input;
-            }
-        }
-        public void UpWave()
-        {
-            if (Status)
-            {
-                if (wave < 108)
-                {
-                    wave += 0.1;
-                }
-                else
-                {
-                    wave = 1;
-                }
-            }
-        }
-        public void LessWave()
-        {
-            if (Status)
-            {
-                if (wave > 87.6)
-                {
-                    wave -= 0.1;
-                }
-                else
-                {
-                    wave = 87.5;
-                }
-            }
-        }
         public override string ToString()
         {
-            return base.ToString() + ", Громкость: " + temp + ", \nВолна: " + wave + "FM";
+            return base.ToString() + ", Громкость: " + temp + ", \nКанал: " + ch;
         }
     }
 }

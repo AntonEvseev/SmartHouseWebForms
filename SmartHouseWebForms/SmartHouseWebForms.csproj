@@ -81,15 +81,24 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Enum\BrightnessLevel.cs" />
+    <Compile Include="Enum\ConditionerMode.cs" />
+    <Compile Include="Enum\FridgeMode.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interface\IConditionerMode.cs" />
+    <Compile Include="Interface\IFridgeMode.cs" />
     <Compile Include="Interface\ILampMode.cs" />
+    <Compile Include="Interface\ISetChannel.cs" />
+    <Compile Include="Interface\ISetTemp.cs" />
     <Compile Include="Interface\ISetVolume.cs" />
     <Compile Include="Interface\ISetWave.cs" />
     <Compile Include="Interface\IStatus.cs" />
+    <Compile Include="Models\Conditioner.cs" />
+    <Compile Include="Models\Fridge.cs" />
     <Compile Include="Models\Lamp.cs" />
     <Compile Include="Models\Radio.cs" />
+    <Compile Include="Models\TV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
