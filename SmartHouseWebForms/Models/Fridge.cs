@@ -12,7 +12,7 @@ namespace SmartHouseWebForms
         public Fridge(bool status, string name)
             : base(status, name)
         {
-            //Status = status;
+            
         }
         public void SetSuperFreezing()
         {

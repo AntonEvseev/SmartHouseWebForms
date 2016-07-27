@@ -13,24 +13,27 @@ using Image = System.Web.UI.WebControls.Image;
 namespace SmartHouseWebForms
 {
     public class DeviceControl : Panel
-    
     { 
         private int id; // Ключ  устройства в коллекции устройств
         private IDictionary<int, Device> devicesDictionary; // Коллекция устройств
         private Label errorMessage; // Отображение статуса устройства
         private Button onButton; // Кнопка Включения устройства
         private Button plusVolume; // Кнопка увеличения громкости
-        private Button minusVolume;
-        private Button lessWave;
-        private Button upWave;
+        private Button minusVolume;// Кнопка уменьшения громкости
+        private Button lessWave; // Кнопка уменьшения волны
+        private Button upWave; // Кнопка увеличения волны
+        private Button previousChannel; //Кнопка предыдущего канала
+        private Button nextChannel; // Кнопка следующего канала
+        private Button setChannel; // Кнопка установки канала
+        private Button setTemp; //Кнопка установки температуры
         private Button setVol; // Кнопка установки значения громкости
         private Button setWave; // Кнопка установки значения волны
         private Button deleteButton; // Кнопка удаления устройства
-        private DropDownList brightnessLevelList;//а
+        private DropDownList brightnessLevelList; 
         private DropDownList conditionerModeList;
         private DropDownList fridgeModeList;
         private Image im;
-        private string error;  // текст сообщение о необходимости включить устройство мм
+        private string error;  // Сообщение о необходимости включить устройство 
         public string Error
         {
             get
@@ -40,6 +43,8 @@ namespace SmartHouseWebForms
         }
         private TextBox volSet;
         private TextBox waveSet;
+        private TextBox tempSet;
+        private TextBox channelSet;
        
         
         public DeviceControl(int id, IDictionary<int, Device> devicesDictionary)
@@ -52,7 +57,7 @@ namespace SmartHouseWebForms
         {
             CssClass = "device-div";
             im = new Image();
-            // Добавление gif анимации в зависимости от девайса
+            // Добавление изображений в зависимости от девайса
             if (devicesDictionary[id] is ILampMode)
             {
                 if (devicesDictionary[id].Status == false)
@@ -137,7 +142,6 @@ namespace SmartHouseWebForms
                 Controls.Add(upWave);
                 waveSet = new TextBox();
                 waveSet.ID = "ws" + id.ToString();
-                //waveSet.Text = "";
                 Controls.Add(waveSet);
                 setWave = new Button();
                 setWave.ID = "sw" + id.ToString();
@@ -145,6 +149,31 @@ namespace SmartHouseWebForms
                 setWave.Text = "Set Wave";
                 setWave.Click += SetWaveButtonClick;
                 Controls.Add(setWave);
+                Controls.Add(Span("<br />"));
+            }
+            if (devicesDictionary[id] is ISetChannel)
+            {
+                previousChannel = new Button();
+                previousChannel.ID = "pc" + id.ToString();
+                previousChannel.CssClass = "button";
+                previousChannel.Text = "Channel-";
+                previousChannel.Click += PreviousChannelButtonClick;
+                Controls.Add(previousChannel);
+                nextChannel = new Button();
+                nextChannel.ID = "nc" + id.ToString();
+                nextChannel.CssClass = "button";
+                nextChannel.Text = "Channel+";
+                nextChannel.Click += NextChannelButtonClick;
+                Controls.Add(nextChannel);
+                channelSet = new TextBox();
+                channelSet.ID = "cs" + id.ToString();
+                Controls.Add(channelSet);
+                setChannel = new Button();
+                setChannel.ID = "sc" + id.ToString();
+                setChannel.CssClass = "button";
+                setChannel.Text = "Set Channel";
+                setChannel.Click += SetChannelButtonClick;
+                Controls.Add(setChannel);
                 Controls.Add(Span("<br />"));
             }
             if (devicesDictionary[id] is ILampMode)
@@ -186,6 +215,16 @@ namespace SmartHouseWebForms
                 setConditionerMode.CssClass = "button";
                 setConditionerMode.Click += SetConditionerModeButtonClick;
                 Controls.Add(setConditionerMode);
+                Controls.Add(Span("<br />"));
+                tempSet = new TextBox();
+                tempSet.ID = "ts" + id.ToString();
+                Controls.Add(tempSet);
+                setTemp = new Button();
+                setTemp.ID = "st" + id.ToString();
+                setTemp.CssClass = "button";
+                setTemp.Text = "Set Temp";
+                setTemp.Click += SetTempButtonClick;
+                Controls.Add(setTemp);
                 Controls.Add(Span("<br />"));
             }
             if (devicesDictionary[id] is IFridgeMode)
@@ -229,6 +268,98 @@ namespace SmartHouseWebForms
             Controls.Add(deleteButton);
         }
 
+        private void SetChannelButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                ISetChannel c = (ISetChannel)devicesDictionary[id];
+                int correntChannel;
+                string temp = channelSet.Text;
+                if (Int32.TryParse(temp, out correntChannel))
+                {
+                    if (correntChannel >= 0 && correntChannel <= 100)
+                    {
+                        c.SetChannel(correntChannel);
+                    }
+                    else
+                    {
+                        error = "Введите значение от 0 до 100!";
+                    }
+                }
+                else
+                {
+                    error = "Введите только цифры!";
+                }
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+        private void NextChannelButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                ISetChannel c = (ISetChannel)devicesDictionary[id];
+                c.NextChannel();
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+        private void PreviousChannelButtonClick(object sender, EventArgs e)
+        {
+            if (devicesDictionary[id].Status)
+            {
+                ISetChannel c = (ISetChannel)devicesDictionary[id];
+                c.PreviousChannel();
+            }
+            else
+            {
+                error = "Включите устройство!";
+            }
+            Controls.Clear();
+            Initializer();
+        }
+
+        private void SetTempButtonClick(object sender, EventArgs e)
+        {
+          if (devicesDictionary[id].Status)
+          {
+              ISetTemp t = (ISetTemp)devicesDictionary[id];
+              int currentTemp;
+              string temp = tempSet.Text;
+              if (Int32.TryParse(temp, out currentTemp))
+              {
+                  if (currentTemp >= 16 && currentTemp <= 30)
+                    {
+                        t.SetTemp(currentTemp);
+                    }
+                    else
+                    {
+                        error = "Введите значение от 16 до 30!";
+                    }
+              }
+              else
+              {
+                  error = "Введите только цифры!";
+              }
+          }
+          else
+          {
+              error = "Включите устройство!";
+          }
+          Controls.Clear();
+          Initializer();
+        }
+    
         private void SetFridgeModeButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status)
@@ -246,7 +377,6 @@ namespace SmartHouseWebForms
                     case 2:
                         f.SetSuperFreezing();
                         break;
-                    
                 }
             }
             else
@@ -289,11 +419,28 @@ namespace SmartHouseWebForms
 
         private void SetWaveButtonClick(object sender, EventArgs e)
         {
+          
             if (devicesDictionary[id].Status)
             {
                 ISetWave w = (ISetWave)devicesDictionary[id];
-                double temp = Convert.ToDouble(volSet.Text); //не конвертирует в даблу
-                w.SetWave(temp);
+                double currentWave;
+                string temp = waveSet.Text;
+                temp = temp.Replace('.', ',');
+                if (Double.TryParse(temp, out currentWave))
+                {
+                    if (currentWave >= 87.5 && currentWave <= 108)
+                    {
+                        w.SetWave(currentWave);
+                    }
+                    else
+                    {
+                        error = "Введите значение от 87.5 до 108!";
+                    }
+                }
+                else
+                {
+                    error = "Введите только цифры!";
+                }
             }
             else
             {
@@ -302,6 +449,7 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
+
         private void UpWaveButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status)
@@ -316,6 +464,7 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
+
         private void LessWaveButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status)
@@ -330,13 +479,29 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
+
         private void SetVolButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status)
             {
                 ISetVolume s = (ISetVolume)devicesDictionary[id];
-                int temp = Convert.ToInt32(volSet.Text);
-                s.SetVolume(temp);
+                int correntVol;
+                string temp = volSet.Text;
+                if (Int32.TryParse(temp, out correntVol))
+                {
+                    if (correntVol >= 0 && correntVol <= 100)
+                    {
+                        s.SetVolume(correntVol);
+                    }
+                    else
+                    {
+                        error = "Введите значение от 0 до 100!";
+                    }
+                }
+                else
+                {
+                    error = "Введите только цифры!";
+                }
             }
             else
             {
@@ -345,6 +510,7 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
+
         private TextBox TextBox(int temp)
         {
             TextBox textBox = new TextBox();
@@ -352,6 +518,7 @@ namespace SmartHouseWebForms
             textBox.Columns = 1;
             return textBox;
         }
+
         private void MinusVolumeButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status)
@@ -366,6 +533,7 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
+
         private void PlusVolumeButtonClick(object sender, EventArgs e)
         {
             if(devicesDictionary[id].Status)
@@ -380,6 +548,7 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
         }
+
        private void OnButtonClick(object sender, EventArgs e)
         {
             if (devicesDictionary[id].Status == false)
@@ -395,11 +564,13 @@ namespace SmartHouseWebForms
             Controls.Clear();
             Initializer();
        }
+
        private void DeleteButtonClick(object sender, EventArgs e)
        {
            devicesDictionary.Remove(id); // Удаление устройства из коллекции
            Parent.Controls.Remove(this); // Удаление графики для устройства
        }
+
        protected Button Button(string text, string pref)
        {
            Button button = new Button();
@@ -407,14 +578,16 @@ namespace SmartHouseWebForms
            button.Text = text;
            return button;
        }
+
        protected HtmlGenericControl Span(string innerHTML)
         {
            HtmlGenericControl span = new HtmlGenericControl("span");
            span.InnerHtml = innerHTML;
            return span;
         }
+
         private void SetBrightnessLevelButtonClick(object sender, EventArgs e)
-       {
+        {
            if (devicesDictionary[id].Status)
            {
                HttpContext.Current.Session["BLevel"] = brightnessLevelList.SelectedIndex;

@@ -26,13 +26,11 @@ namespace SmartHouseWebForms
                 devicesDictionary.Add(5, new Conditioner(false, "Кондиционер"));
                 Session["Devices"] = devicesDictionary;
                 Session["NextId"] = 6;
-                
             }
 
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (IsPostBack)
             {
                 if (IsPostBack)
@@ -40,12 +38,10 @@ namespace SmartHouseWebForms
                     addDevicesButton.Click += AddDeviceButtonClick;
                 }
                 InitialiseDevicesPanel(); 
-
             }
             else
             {
                 InitialiseDevicesPanel();
-                
             }
         }
         protected void InitialiseDevicesPanel()
@@ -77,14 +73,11 @@ namespace SmartHouseWebForms
                     newDevice = new Conditioner(false, "Кондиционер");
                     break;
             }
-
             int id = (int)Session["NextId"];
             devicesDictionary.Add(id, newDevice); // Добавление устройства в коллекцию
             devicesPanel.Controls.Add(new DeviceControl(id, devicesDictionary)); // Добавление графики для фигуры устройства
             id++;
             Session["NextId"] = id;
         }
-
-              
     }
 }

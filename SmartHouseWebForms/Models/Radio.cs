@@ -12,7 +12,7 @@ namespace SmartHouseWebForms
         public Radio(bool status, string name)
             : base(status, name)
         {
-            //Status = status;
+            
         }
         public int Volume
         {
@@ -43,11 +43,7 @@ namespace SmartHouseWebForms
                 {
                     temp += 1;
                 }
-                else
-                {
-                    temp = 1;
-                }
-            }
+           }
         }
         public void LessVolume()
         {
@@ -92,10 +88,6 @@ namespace SmartHouseWebForms
                 if (wave < 108)
                 {
                     wave += 0.1;
-                }
-                else
-                {
-                    wave = 1;
                 }
             }
         }

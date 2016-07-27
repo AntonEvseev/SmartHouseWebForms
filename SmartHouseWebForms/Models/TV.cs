@@ -44,7 +44,7 @@ namespace SmartHouseWebForms
             }
             set
             {
-                if (value >= 0 && value <= 200)
+                if (value >= 0 && value <= 100)
                 {
                     ch = value;
                 }
@@ -62,13 +62,9 @@ namespace SmartHouseWebForms
             if (Status)
             {
 
-                if (ch < 200)
+                if (ch < 100)
                 {
                     ch += 1;
-                }
-                else
-                {
-                    ch = 1;
                 }
             }
         }
@@ -95,10 +91,6 @@ namespace SmartHouseWebForms
                 if (temp < 100)
                 {
                     temp += 1;
-                }
-                else
-                {
-                    temp = 1;
                 }
             }
         }
