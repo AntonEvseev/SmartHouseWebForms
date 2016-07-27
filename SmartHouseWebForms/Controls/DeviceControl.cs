@@ -57,16 +57,19 @@ namespace SmartHouseWebForms
         {
             CssClass = "device-div";
             im = new Image();
+            
             // Добавление изображений в зависимости от девайса
             if (devicesDictionary[id] is ILampMode)
             {
                 if (devicesDictionary[id].Status == false)
                 {
                     im.ImageUrl = "image/LampOff.gif";
+                    im.CssClass = "imageLamp";
                 }
                 else
                 {
                     im.ImageUrl = "image/LampOn.gif";
+                    im.CssClass = "imageLamp";
                 }
                 Controls.Add(im);
             }
@@ -92,8 +95,10 @@ namespace SmartHouseWebForms
             }
             errorMessage = new Label();
             errorMessage.ForeColor = System.Drawing.Color.Red;
+            errorMessage.CssClass = "error";
             errorMessage.Text = Error;
             Controls.Add(errorMessage);
+            Controls.Add(Span("<br />"));
             Controls.Add(Span("<br />" + "Устройство: " + devicesDictionary[id].Name + "<br />"));
             if (devicesDictionary[id] is IStatus)
             {
@@ -116,6 +121,7 @@ namespace SmartHouseWebForms
                Controls.Add(Span("<br />"));
                volSet = new TextBox();
                volSet.ID = "vs" + id.ToString();
+               volSet.CssClass = "fieldBox";
                volSet.Text = "";
                Controls.Add(volSet);
                setVol = new Button();
@@ -140,8 +146,10 @@ namespace SmartHouseWebForms
                 upWave.Text = "Wave+";
                 upWave.Click += UpWaveButtonClick;
                 Controls.Add(upWave);
+                Controls.Add(Span("<br />"));
                 waveSet = new TextBox();
                 waveSet.ID = "ws" + id.ToString();
+                waveSet.CssClass = "fieldBox";
                 Controls.Add(waveSet);
                 setWave = new Button();
                 setWave.ID = "sw" + id.ToString();
@@ -165,8 +173,10 @@ namespace SmartHouseWebForms
                 nextChannel.Text = "Channel+";
                 nextChannel.Click += NextChannelButtonClick;
                 Controls.Add(nextChannel);
+                Controls.Add(Span("<br />"));
                 channelSet = new TextBox();
                 channelSet.ID = "cs" + id.ToString();
+                channelSet.CssClass = "fieldBox";
                 Controls.Add(channelSet);
                 setChannel = new Button();
                 setChannel.ID = "sc" + id.ToString();
@@ -179,6 +189,7 @@ namespace SmartHouseWebForms
             if (devicesDictionary[id] is ILampMode)
             {
                 Controls.Add(Span("Выберите режим: "));
+                Controls.Add(Span("<br />"));
                 brightnessLevelList = new DropDownList();
                 brightnessLevelList.ID = "b" + id;
                 brightnessLevelList.CssClass = "list";
@@ -199,6 +210,7 @@ namespace SmartHouseWebForms
             if (devicesDictionary[id] is IConditionerMode)
             {
                 Controls.Add(Span("Выберите режим: "));
+                Controls.Add(Span("<br />"));
                 conditionerModeList = new DropDownList();
                 conditionerModeList.ID = "cm" + id.ToString();
                 conditionerModeList.CssClass = "list";
@@ -218,6 +230,7 @@ namespace SmartHouseWebForms
                 Controls.Add(Span("<br />"));
                 tempSet = new TextBox();
                 tempSet.ID = "ts" + id.ToString();
+                tempSet.CssClass = "fieldBox2";
                 Controls.Add(tempSet);
                 setTemp = new Button();
                 setTemp.ID = "st" + id.ToString();
@@ -230,6 +243,7 @@ namespace SmartHouseWebForms
             if (devicesDictionary[id] is IFridgeMode)
             {
                 Controls.Add(Span("Выберите режим: "));
+                Controls.Add(Span("<br />"));
                 fridgeModeList = new DropDownList();
                 fridgeModeList.ID = "fm" + id.ToString();
                 fridgeModeList.CssClass = "list";
@@ -262,7 +276,7 @@ namespace SmartHouseWebForms
             Controls.Add(Span("<br />"));
             deleteButton = new Button();
             deleteButton.ID = "d" + id.ToString();
-            deleteButton.CssClass = "button";
+            deleteButton.CssClass = "buttonDelete";
             deleteButton.Text = "Удалить устройство";
             deleteButton.Click += DeleteButtonClick;
             Controls.Add(deleteButton);

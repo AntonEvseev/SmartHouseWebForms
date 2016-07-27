@@ -1,0 +1,129 @@
+﻿body{
+background: #373C4A;
+color: rgb(209,209,217);
+font-size: 16px;
+}
+#devicesPanel{
+position: absolute;
+top: 100px;
+}
+.on{
+position: absolute;
+bottom: 56px;
+left: 70px;
+border-radius: 90px;
+background-repeat: no-repeat;
+background-image: url(image/on.png);
+width: 100px;
+height: 100px;
+}
+.off {
+position: absolute;
+bottom: 56px;
+left: 70px;
+border-radius: 90px;
+background-repeat: no-repeat;
+background-image: url(image/off.png);
+width: 100px;
+height: 100px;
+}
+.button{
+margin-top: 7px;
+width: 120px;
+position: relative;
+display: inline-block;
+font-size: 90%;
+font-weight: 700;
+color: rgb(209,209,217);
+text-decoration: none;
+text-shadow: 0 -1px 2px rgba(0,0,0,.2);
+padding: .5em 1em;
+outline: none;
+border-radius: 3px;
+background: linear-gradient(rgb(110,112,120), rgb(81,81,86)) rgb(110,112,120);
+box-shadow:
+0 1px rgba(255,255,255,.2) inset,
+0 3px 5px rgba(0,1,6,.5),
+0 0 1px 1px rgba(0,1,6,.2);
+transition: .2s ease-in-out;
+}
+.button:hover:not(:active) {
+background: linear-gradient(rgb(126,126,134), rgb(70,71,76)) rgb(126,126,134);
+}
+.list{
+width: 125px;
+height: 34px;
+background: #373C4A;
+color: rgb(209,209,217);
+font-size: 16px;
+border-radius: 3px;
+}
+.device-div{
+width: 250px;
+height: 530px;
+float: left;
+position: relative;
+top: 40px;
+padding-top: 25px;
+}
+#header{
+color: #40E0D0;
+font-size: 40px;
+position: absolute;
+left: 50%;
+}
+.error{
+float: left;
+}
+.imageLamp{
+padding-left: 50px;
+}
+.fieldBox {
+width: 116px;
+height: 27px;
+background: #40E0D0;
+text-align: center;
+color: #DC143C;
+font-size: 20px;
+}
+.fieldBox2 {
+width: 120px;
+height: 27px;
+background: #40E0D0;
+text-align: center;
+color: #DC143C;
+font-size: 20px;
+}
+.buttonDelete{
+width: 200px;
+position: absolute;
+bottom: 1px;
+left: 22px;
+display: inline-block;
+color: red;
+font-weight: bold;
+text-decoration: none;
+text-shadow: rgba(255,255,255,.5) 1px 1px, rgba(100,100,100,.3) 3px 7px 3px;
+user-select: none;
+padding: 1em 2em;
+outline: none;
+border-radius: 3px / 100%;
+background-image:
+linear-gradient(45deg, rgba(255,255,255,.0) 30%, rgba(255,255,255,.8), rgba(255,255,255,.0) 70%),
+linear-gradient(to right, rgba(255,255,255,1), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 90%, rgba(255,255,255,.3)),
+linear-gradient(to right, rgba(125,125,125,1), rgba(255,255,255,.9) 45%, rgba(125,125,125,.5)),
+linear-gradient(to right, rgba(125,125,125,1), rgba(255,255,255,.9) 45%, rgba(125,125,125,.5)),
+linear-gradient(to right, rgba(223,190,170,1), rgba(255,255,255,.9) 45%, rgba(223,190,170,.5)),
+linear-gradient(to right, rgba(223,190,170,1), rgba(255,255,255,.9) 45%, rgba(223,190,170,.5));
+background-repeat: no-repeat;
+background-size: 200% 100%, auto, 100% 2px, 100% 2px, 100% 1px, 100% 1px;
+background-position: 200% 0, 0 0, 0 0, 0 100%, 0 4px, 0 calc(100% - 4px);
+box-shadow: rgba(0,0,0,.5) 3px 10px 10px -10px;
+}
+.buttonDelete:hover {
+transition: .5s linear;
+background-position: -200% 0, 0 0, 0 0, 0 100%, 0 4px, 0 calc(100% - 4px);
+}
+.buttonDelete:active {
+top: 1px;
+}
